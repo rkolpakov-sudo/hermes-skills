@@ -1,0 +1,39 @@
+{
+  "step": 5,
+  "stage": "LOCKED_WORKING",
+  "status": "ИСПРАВЛЕН — _clean_mass_note, заголовки секций, dash→—",
+  "lock": "Любые изменения скилла только с явного подтверждения пользователя. Iron Law п.0.",
+  "known_issues": [
+    "4 EMPTY_NAME rows (frame stamps, harmless)",
+    "detect_template не работает на повёрнутых страницах (ОВ)"
+  ],
+  "fix_20260911": {
+    "desc": "dash-строки → отдельные записи. Не сливаются в main name.",
+    "affected_pages": [18, 19],
+    "records_added": 10,
+    "verified_on": "Desktop/КОРОЛЕВ/Внутреннее водоснабжение/3924-2-МСП-ВК1.2.pdf"
+  },
+  "fix_current": {
+    "desc": "3 правки extract_spec_vk.py: 1) _clean_mass_note (нечисловой mass→note); 2) заголовки СИСТЕМА в CSV; 3) sub-позиции→прочерк",
+    "verified_on": "Desktop/КОРОЛЕВ/Внутреннее водоснабжение/3924-2-МСП-ВК1.3.pdf",
+    "records": 155,
+    "final_rows": 161
+  },
+  "template_support": {
+    "detect_template.py": "готова",
+    "template_format.md": "создана",
+    "extract_spec_custom.py": "ожидает копирования из RFQ_Pipeline"
+  },
+  "last_run": {
+    "pdf": "Desktop/КОРОЛЕВ/Дымоудаление/3924-2-МСП-РД-ОВ 1.1.pdf",
+    "script": "extract_spec_vk.py (find_tables, universal VK+OV)",
+    "records": 160,
+    "final_rows": 152,
+    "sections": 4,
+    "items_with_qty": 112,
+    "status": "delivered",
+    "lark_notified": true
+  },
+  "xlsx_path": "C:\\Users\\Ruslan\\Desktop\\КОРОЛЕВ\\Внутреннее водоснабжение\\3924-2-МСП-РД-ВК 1.4.xlsx",
+  "workdir": "C:/c/Users/Ruslan/.hermes/tmp/vk14"
+}

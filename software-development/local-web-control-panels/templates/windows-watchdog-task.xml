@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<!-- Windows Task Scheduler task that keeps a localhost control panel alive.
+
+Install (write the file as UTF-16 with BOM first -- encoding="utf-16" in Python):
+    schtasks /create /tn MyPanel_Watchdog /xml "C:\path\to\task.xml" /f
+Check:
+    schtasks /query /tn MyPanel_Watchdog /xml      # repetition must have NO <Duration>
+    schtasks /query /tn MyPanel_Watchdog /fo list  # next run must be ~now, not tomorrow
+
+Key points:
+  * <Repetition> WITHOUT <Duration> = repeats indefinitely.
+    `schtasks /create /sc minute /mo 1` instead bakes in <Duration>PT10M</Duration> and stops
+    after 10 minutes (next run then shows the next day) -- that is the trap.
+  * <LogonTrigger> restarts the panel after every reboot/login.
+  * <Command> is an ABSOLUTE interpreter path; pythonw.exe avoids a console flash every minute.
+  * Replace USER_SID with the real SID (`whoami /user`) and the paths with yours.
+-->
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Description>Watchdog: keeps the local control panel on its port (logon + every minute).</Description>
+  </RegistrationInfo>
+  <Triggers>
+    <LogonTrigger>
+      <Enabled>true</Enabled>
+      <UserId>USER_SID</UserId>
+      <Delay>PT15S</Delay>
+    </LogonTrigger>
+    <TimeTrigger>
+      <StartBoundary>2026-01-01T00:00:00</StartBoundary>
+      <Enabled>true</Enabled>
+      <Repetition>
+        <Interval>PT1M</Interval>
+        <StopAtDurationEnd>false</StopAtDurationEnd>
+      </Repetition>
+    </TimeTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <UserId>USER_SID</UserId>
+      <LogonType>InteractiveToken</LogonType>
+      <RunLevel>LeastPrivilege</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
+    <IdleSettings>
+      <StopOnIdleEnd>false</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <WakeToRun>false</WakeToRun>
+    <ExecutionTimeLimit>PT5M</ExecutionTimeLimit>
+    <Priority>7</Priority>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <Command>C:\path\to\venv\Scripts\pythonw.exe</Command>
+      <Arguments>C:\path\to\port_watchdog.py --server-dir C:\path\to\server --port 8791</Arguments>
+    </Exec>
+  </Actions>
+</Task>
